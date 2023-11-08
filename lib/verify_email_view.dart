@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mynotes/constants/routes.dart';
 
 class VerifyEmailView extends StatefulWidget {
   const VerifyEmailView({super.key});
@@ -21,7 +22,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
         child: Column(
           children: [
             const Text(
-              'Пожалуйста подтвердите вашу почту',
+              'Мы отправили сообщения на вашу почту перейдите по ссылки /n Чтобы подтвердить его.',
               style: TextStyle(
                 fontSize: 14,
                 color: Color.fromARGB(255, 72, 50, 77),
@@ -32,8 +33,19 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
               onPressed: () async {
                 final user = FirebaseAuth.instance.currentUser;
                 await user?.sendEmailVerification();
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  registerRoute,
+                  (route) => false,
+                );
               },
-              child: const Text('Отправить подтверждение по электронной почте'),
+              child: const Text(
+                  'Если не получили письмо для подтверждения , нажмите на это сообщение '),
+            ),
+            TextButton(
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+              },
+              child: const Text('Перезапуск'),
             )
           ],
         ),

@@ -2,9 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 //import 'package:mynotes/firebase_options.dart';
-import 'dart:developer' as devtools show log;
 
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -60,18 +60,38 @@ class _RegisterViewState extends State<RegisterView> {
               final email = _email.text;
               final password = _password.text;
               try {
-                final UserCredential = await FirebaseAuth.instance
-                    .createUserWithEmailAndPassword(
-                        email: email, password: password);
-                devtools.log(UserCredential.toString());
+                await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                    email: email, password: password);
+                final user = FirebaseAuth.instance.currentUser;
+                await user?.sendEmailVerification();
+                Navigator.of(context).pushNamed(verifyEmailView);
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'weak possword') {
-                  devtools.log('Пароль легкий');
+                  await showErrorDialog(
+                    context,
+                    'Пароль легкий',
+                  );
                 } else if (e.code == 'email-already-in-use') {
-                  devtools.log('Эта почта уже существует');
+                  await showErrorDialog(
+                    context,
+                    'Эта почта уже существует',
+                  );
                 } else if (e.code == 'invalid-email') {
-                  devtools.log('Некоректная почта');
+                  await showErrorDialog(
+                    context,
+                    'Некоректная почта',
+                  );
+                } else {
+                  await showErrorDialog(
+                    context,
+                    'Ошибка ${e.code}',
+                  );
                 }
+              } catch (e) {
+                await showErrorDialog(
+                  context,
+                  e.toString(),
+                );
               }
             },
             child: const Text('Зарегистрироваться'),

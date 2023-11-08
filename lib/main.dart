@@ -1,5 +1,7 @@
 //import 'dart:math';
 
+import 'dart:js';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +26,7 @@ void main() async {
         loginRoute: (context) => const LoginView(),
         registerRoute: (context) => const RegisterView(),
         notesRoute: (context) => const NotesView(),
+        verifyEmailView: (context) => const VerifyEmailView(),
       },
     ),
   );
