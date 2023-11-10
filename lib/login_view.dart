@@ -39,7 +39,7 @@ class _LoginViewState extends State<LoginView> {
       home: Scaffold(
         // Вы также можете обернуть его в Scaffold
         appBar: AppBar(
-          title: Text('Вход'),
+          title: const Text('Вход'),
         ),
         body: Column(
           children: [
@@ -67,9 +67,19 @@ class _LoginViewState extends State<LoginView> {
                 try {
                   await FirebaseAuth.instance.signInWithEmailAndPassword(
                       email: email, password: password);
+                  final user = FirebaseAuth.instance.currentUser;
                   if (mounted) {
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil(notesRoute, (route) => false);
+                    if (user?.emailVerified ?? false) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        notesRoute,
+                        (route) => false,
+                      );
+                    } else {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        verifyEmailRoute,
+                        (route) => false,
+                      );
+                    }
                   }
                 } on FirebaseAuthException catch (e) {
                   // Проверяем, находится ли виджет в дереве виджетов
