@@ -1,9 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-//import 'package:mynotes/firebase_options.dart';
-
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/services/auth/auth_exceptions.dart';
+import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
@@ -60,37 +58,29 @@ class _RegisterViewState extends State<RegisterView> {
               final email = _email.text;
               final password = _password.text;
               try {
-                await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                    email: email, password: password);
-                final user = FirebaseAuth.instance.currentUser;
-                await user?.sendEmailVerification();
+                await AuthService.firebase()
+                    .createUser(email: email, password: password);
+                AuthService.firebase().sendEmailVerification();
                 Navigator.of(context).pushNamed(verifyEmailRoute);
-              } on FirebaseAuthException catch (e) {
-                if (e.code == 'weak possword') {
-                  await showErrorDialog(
-                    context,
-                    'Пароль легкий',
-                  );
-                } else if (e.code == 'email-already-in-use') {
-                  await showErrorDialog(
-                    context,
-                    'Эта почта уже существует',
-                  );
-                } else if (e.code == 'invalid-email') {
-                  await showErrorDialog(
-                    context,
-                    'Некоректная почта',
-                  );
-                } else {
-                  await showErrorDialog(
-                    context,
-                    'Ошибка ${e.code}',
-                  );
-                }
-              } catch (e) {
+              } on WeakPasswordAuthException {
                 await showErrorDialog(
                   context,
-                  e.toString(),
+                  'Пароль легкий',
+                );
+              } on EmailAlreadyInUseAuthException {
+                await showErrorDialog(
+                  context,
+                  'Эта почта уже существует',
+                );
+              } on InvalidEmailAuthException {
+                await showErrorDialog(
+                  context,
+                  'Некоректная почта',
+                );
+              } on GenericAuthException {
+                await showErrorDialog(
+                  context,
+                  'Не удалось зарегистрироваться',
                 );
               }
             },

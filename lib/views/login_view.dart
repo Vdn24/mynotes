@@ -1,6 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/services/auth/auth_exceptions.dart';
+import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/utilities/show_error_dialog.dart';
 
 //import 'package:firebase_core/firebase_core.dart';
@@ -65,11 +66,13 @@ class _LoginViewState extends State<LoginView> {
                 final password = _password.text;
 
                 try {
-                  await FirebaseAuth.instance.signInWithEmailAndPassword(
-                      email: email, password: password);
-                  final user = FirebaseAuth.instance.currentUser;
+                  await AuthService.firebase().logIn(
+                    email: email,
+                    password: password,
+                  );
+                  final user = AuthService.firebase().currentUser;
                   if (mounted) {
-                    if (user?.emailVerified ?? false) {
+                    if (user?.isEmailVerified ?? false) {
                       Navigator.of(context).pushNamedAndRemoveUntil(
                         notesRoute,
                         (route) => false,
@@ -81,34 +84,21 @@ class _LoginViewState extends State<LoginView> {
                       );
                     }
                   }
-                } on FirebaseAuthException catch (e) {
-                  // Проверяем, находится ли виджет в дереве виджетов
-                  if (mounted) {
-                    // Показываем диалоговое окно с помощью showErrorDialog
-                    await showErrorDialog(
-                      context,
-                      e.code == 'user-not-found'
-                          ? 'Пользователь не найден'
-                          : e.code == 'wrong-password'
-                              ? 'Неправильный пароль'
-                              : 'Error: ${e.code}',
-                    );
-                  } else {
-                    // Освобождаем ресурсы, связанные с виджетом
-                    dispose();
-                  }
-                } catch (e) {
-                  // Проверяем, находится ли виджет в дереве виджетов
-                  if (mounted) {
-                    // Показываем диалоговое окно с помощью showErrorDialog
-                    await showErrorDialog(
-                      context,
-                      e.toString(),
-                    );
-                  } else {
-                    // Освобождаем ресурсы, связанные с виджетом
-                    dispose();
-                  }
+                } on UserNotFoundAuthException {
+                  await showErrorDialog(
+                    context,
+                    'Пользователь не найден',
+                  );
+                } on WrongPasswordAuthException {
+                  await showErrorDialog(
+                    context,
+                    'Неправильный пароль',
+                  );
+                } on GenericAuthException {
+                  await showErrorDialog(
+                    context,
+                    'Ошибка аутефикации',
+                  );
                 }
               },
               child: const Text('Войти'),
