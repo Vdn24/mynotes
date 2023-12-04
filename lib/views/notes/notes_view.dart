@@ -32,8 +32,14 @@ class _NotesViewState extends State<NotesView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Основная страница'),
+          title: const Text('Твои Заметки'),
           actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(newNoteRoute);
+              },
+              icon: const Icon(Icons.add),
+            ),
             PopupMenuButton<MenuAction>(
               onSelected: (value) async {
                 switch (value) {
@@ -62,8 +68,24 @@ class _NotesViewState extends State<NotesView> {
           ],
         ),
         body: FutureBuilder(
-          future: future,
-          builder: builder,
+          future: _notesService.getOrCreateUser(email: userEmail),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.done:
+                return StreamBuilder(
+                    stream: _notesService.allNotes,
+                    builder: (context, snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
+                          return const Text('Подождите все заметки...');
+                        default:
+                          return const CircularProgressIndicator();
+                      }
+                    });
+              default:
+                return const CircularProgressIndicator();
+            }
+          },
         ));
   }
 }
