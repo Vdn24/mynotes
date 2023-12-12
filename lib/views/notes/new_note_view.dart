@@ -32,6 +32,11 @@ class _NewNoteViewState extends State<NewNoteView> {
     );
   }
 
+  void _setupTextControllerListener() {
+    _textController.removeListener(_textControllerListener);
+    _textController.addListener(_textControllerListener);
+  }
+
   Future<DatabaseNote> createNewNote() async {
     final existingNote = _note;
     if (existingNote != null) {
@@ -75,7 +80,26 @@ class _NewNoteViewState extends State<NewNoteView> {
       appBar: AppBar(
         title: const Text('New Note'),
       ),
-      body: const Text('Здесь можете написать свои заметки...'),
+      body: FutureBuilder(
+        future: createNewNote(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.done:
+              _note = snapshot.data as DatabaseNote;
+              _setupTextControllerListener();
+              return TextField(
+                controller: _textController,
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                decoration: const InputDecoration(
+                  hintText: 'Можете написать заметку...',
+                ),
+              );
+            default:
+              return const CircularProgressIndicator();
+          }
+        },
+      ),
     );
   }
 }
