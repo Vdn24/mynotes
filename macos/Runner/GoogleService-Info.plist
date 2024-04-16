@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyDQlCalx0RPrPfuD4v7bW3onpIDzZ1f5hc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>487719915215</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>de.vdn24.mynotes.RunnerTests</string>
+	<key>PROJECT_ID</key>
+	<string>mynotes-c3070</string>
+	<key>STORAGE_BUCKET</key>
+	<string>mynotes-c3070.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:487719915215:ios:67619e7fa92558ed7db1ba</string>
+</dict>
+</plist>

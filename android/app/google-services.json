@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "487719915215",
+    "project_id": "mynotes-c3070",
+    "storage_bucket": "mynotes-c3070.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:487719915215:android:36e34d3e11de64a77db1ba",
+        "android_client_info": {
+          "package_name": "de.vdn24.mynotes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7sloLW4gRydVqiox88EuLFLgNbk4tHII"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
