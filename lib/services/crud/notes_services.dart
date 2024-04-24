@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mynotes/extensions/list/filter.dart';
 import 'package:mynotes/services/crud/crud_exceptions.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
@@ -12,6 +13,8 @@ class NotesService {
 
   /// Список для хранения заметок, загруженных из базы данных
   List<DatabaseNote> _notes = [];
+
+  DatabaseUser? _user;
 
   /// статическая переменная, хранящая единственный экземпляр
   static final NotesService _shared = NotesService._sharedInstance();
@@ -38,18 +41,32 @@ class NotesService {
 
   /// Геттер allNotes предоставляет доступ к потоку заметок, позволяя виджетам подписываться
   /// на этот поток и реагировать на любые изменения в списке заметок.
-  Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream;
+  Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream.filter((note){
+   final currentUser = _user;
+   if(currentUser != null){
+   return note.userId == currentUser.id;
+   }else{
+    throw UserShouldBeSetBeforeReadingAllNotes();
+   }
+  });
 
   ///Это асинхронный метод, который пытается получить пользователя по электронной почте.
   /// Если пользователь не найден, он создает нового пользователя с этой электронной почтой.
   Future<DatabaseUser> getOrCreateUser({
     required String email,
+    bool setAsCurrentUser = true,
   }) async {
     try {
       final user = await getUser(email: email);
+      if(setAsCurrentUser){
+        _user = user;
+      }
       return user;
     } on CouldNotFindNote {
       final createdUser = await createUser(email: email);
+      if(setAsCurrentUser){
+        _user = createdUser;
+      }
       return createdUser;
     } catch (e) {
       rethrow;

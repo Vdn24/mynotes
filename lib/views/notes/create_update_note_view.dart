@@ -51,31 +51,31 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   /// Асинхронный метод, который создает новую заметку, если текущая заметка _note равна null
   Future<DatabaseNote> createOrGetExistingNote(BuildContext context) async {
    
-   final widgetNote = context.getArgument<DatabaseNote>();
+   final widgetNote = context.getArgument<DatabaseNote>(); // Получаем заметку из переданого контекста  
 
+   // Если widgetNote не равен null, то обновляем состояние виджета с этой заметкой и возвращаем ее
    if(widgetNote != null){
     _note = widgetNote;
     _textController.text = widgetNote.text;
     return widgetNote;
    }
-    // Сначала проверяется, существует ли уже заметка в переменной
+    // Получаем существующую заметку из переменной _note
     final existingNote = _note;
+    //  Если существующая заметка не равна null, то возвращаем ее
     if (existingNote != null) {
-      // Если да, то эта заметка возвращается, и дальнейшие шаги не выполняются
       return existingNote;
     }
-    //  Затем получается текущий авторизованный пользователь через сервис аутентификации Firebase
+    // Получаем текущего пользователя через сервис аутентификации Firebase. 
+    // currentUser может быть null, поэтому используется оператор !, чтобы убедиться, что пользователь не равен null
     final currentUser = AuthService.firebase().currentUser!;
-    // Получается электронная почта авторизованного пользователя
+    // Получаем электронную почту авторизованного пользователя
     final email = currentUser.email!;
-    // Асинхронно получается пользователь (владелец заметки) из сервиса заметок по электронной почте
+    // Асинхронно получаем пользователя (владельца заметки) из сервиса заметок по электронной почте.
     final owner = await _notesService.getUser(email: email);
-    // Асинхронно создается новая заметка с владельцем, полученным на предыдущем шаге
-
-    // Состояние виджета обновляется с новой заметкой, что приводит к перерисовке интерфейса
+    // Асинхронно создаем новую заметку с владельцем, полученным на предыдущем шаге
     final newNote = await _notesService.createNote(owner: owner);
-    _note = newNote;
-    return newNote;
+    _note = newNote; // Обновляем состояние виджета с новой заметкой
+    return newNote; // Возвращаем новую заметку
   }
 
   /// Удаляет заметку, если текстовое поле пустое
