@@ -46,7 +46,7 @@ class _NotesViewState extends State<NotesView> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.of(context).pushNamed(newNoteRoute);
+              Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
             },
             icon: const Icon(Icons.add),
           ),
@@ -118,6 +118,16 @@ class _NotesViewState extends State<NotesView> {
                           notes: allNotes,
                           onDeleteNote: (note) async {
                             await _notesService.deleteNote(id: note.id);
+                          },
+                          // анонимной функции, которая будет вызвана при событии касания (tap) на каком-либо виджете
+                          onTap: (note) {
+                            // Navigator - это класс, который управляет навигацией между разными экранами (маршрутами) в приложении.
+                            // of(context) используется для получения экземпляра Navigator из текущего контекста (обычно это BuildContext)
+                            // .pushNamed(...) - Этот метод позволяет перейти на новый экран (маршрут) по его имени. Он ожидает имя маршрута в качестве аргумента.
+                            Navigator.of(context).pushNamed(
+                              createOrUpdateNoteRoute, //  имя маршрута
+                              arguments: note, // передаем объект note в качестве аргумента для нового маршрута
+                            );
                           },
                         );
                       } else {

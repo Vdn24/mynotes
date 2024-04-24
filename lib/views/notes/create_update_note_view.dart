@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/services/crud/notes_services.dart';
+import 'package:mynotes/utilities/lib/utilities/generics/get_arguments.dart';
 
-class NewNoteView extends StatefulWidget {
-  const NewNoteView({Key? key}) : super(key: key);
+class CreateUpdateNoteView extends StatefulWidget {
+  const CreateUpdateNoteView({Key? key}) : super(key: key);
 
   @override
-  State<NewNoteView> createState() => _NewNoteViewState();
+  State<CreateUpdateNoteView> createState() => _CreateUpdateNoteViewState();
 }
 
-class _NewNoteViewState extends State<NewNoteView> {
+class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   /// Переменная для хранения текущей заметки.
   DatabaseNote? _note;
 
@@ -48,8 +49,15 @@ class _NewNoteViewState extends State<NewNoteView> {
 
 // ТУТ БЫЛИ СДЕЛАНЫ ИЗМЕНЕНИЯ
   /// Асинхронный метод, который создает новую заметку, если текущая заметка _note равна null
-  Future<DatabaseNote> createNewNote() async {
-    debugPrint('createNewNote() вызвался');
+  Future<DatabaseNote> createOrGetExistingNote(BuildContext context) async {
+   
+   final widgetNote = context.getArgument<DatabaseNote>();
+
+   if(widgetNote != null){
+    _note = widgetNote;
+    _textController.text = widgetNote.text;
+    return widgetNote;
+   }
     // Сначала проверяется, существует ли уже заметка в переменной
     final existingNote = _note;
     if (existingNote != null) {
@@ -65,7 +73,9 @@ class _NewNoteViewState extends State<NewNoteView> {
     // Асинхронно создается новая заметка с владельцем, полученным на предыдущем шаге
 
     // Состояние виджета обновляется с новой заметкой, что приводит к перерисовке интерфейса
-    return await _notesService.createNote(owner: owner);
+    final newNote = await _notesService.createNote(owner: owner);
+    _note = newNote;
+    return newNote;
   }
 
   /// Удаляет заметку, если текстовое поле пустое
@@ -111,11 +121,10 @@ class _NewNoteViewState extends State<NewNoteView> {
         title: const Text('New Note'),
       ),
       body: FutureBuilder(
-        future: createNewNote(),
+        future: createOrGetExistingNote(context),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
-              _note = snapshot.data as DatabaseNote;
               _setupTextControllerListener();
               return TextField(
                 controller: _textController,

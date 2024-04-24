@@ -3,12 +3,13 @@ import 'package:mynotes/services/crud/notes_services.dart';
 import 'package:mynotes/utilities/dialogs/delete_dialog.dart';
 
 // typedef используется для создания псевдонима
-typedef DeleteNoteCallback = void Function(DatabaseNote note);
-
+typedef NoteCallback = void Function(DatabaseNote note);
+//Это определение типа NoteCallback как функции обратного вызова, которая не возвращает значение (void) и принимает один аргумент DatabaseNote
 // это класс виджета, который наследуется от StatelessWidget, что означает, что он не имеет изменяемого состояни
 class NotesListView extends StatelessWidget {
   final List<DatabaseNote> notes;
-  final DeleteNoteCallback onDeleteNote;
+  final NoteCallback onDeleteNote;
+  final NoteCallback onTap;
   // Конструктор NotesListView принимает необязательный параметр key и два
   // обязательных параметра: notes и onDeleteNote. super(key: key)
   // вызывает конструктор базового класса StatelessWidget
@@ -16,6 +17,7 @@ class NotesListView extends StatelessWidget {
     Key? key,
     required this.notes,
     required this.onDeleteNote,
+    required this.onTap,
   }) : super(key: key);
 
   @override
@@ -26,6 +28,11 @@ class NotesListView extends StatelessWidget {
         final note = notes[index];
         return ListTile(
           //Это виджет, который обычно используется в Flutter для отображения строки в ListView
+          onTap:(){
+            onTap(note);
+          },
+          // Это определение анонимной функции, которая вызывается при событии касания (tap).
+          // Внутри этой функции вызывается функция onTap, переданная в конструктор, и ей передается объект note
           title: Text(
             // текст заметки
             note.text,
