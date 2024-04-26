@@ -69,7 +69,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     // currentUser может быть null, поэтому используется оператор !, чтобы убедиться, что пользователь не равен null
     final currentUser = AuthService.firebase().currentUser!;
     // Получаем электронную почту авторизованного пользователя
-    final email = currentUser.email!;
+    final email = currentUser.email;
     // Асинхронно получаем пользователя (владельца заметки) из сервиса заметок по электронной почте.
     final owner = await _notesService.getUser(email: email);
     // Асинхронно создаем новую заметку с владельцем, полученным на предыдущем шаге

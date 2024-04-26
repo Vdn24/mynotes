@@ -22,7 +22,7 @@ class _NotesViewState extends State<NotesView> {
   late final NotesService _notesService;
   String get userEmail => AuthService.firebase()
       .currentUser!
-      .email!; // возвращает адрес электронной почты текущего пользователя
+      .email; // возвращает адрес электронной почты текущего пользователя
 
   ///Метод initState вызывается один раз, когда объект State вставляется в дерево виджетов.
   ///Здесь инициализируются _notesService с экземпляром NotesService. Вызов super.initState() обязателен, чтобы базовый класс мог выполнить дополнительную инициализацию

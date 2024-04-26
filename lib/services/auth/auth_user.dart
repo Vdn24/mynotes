@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 
 @immutable
 class AuthUser {
+  final String id;
   ///Финальное (неизменяемое) поле, которое может содержать null, представляющее email пользователя.
-  final String? email;
+  final String email;
 
   /// Финальное (неизменяемое) булево значение, указывающее,
   ///  подтвержден ли email пользователя
@@ -14,6 +15,7 @@ class AuthUser {
   /// Конструктор, который инициализирует объект AuthUser с заданными значениями email и isEmailVerified.
   ///Требует, чтобы оба значения были предоставлены при создании объекта
   const AuthUser({
+    required this.id, 
     required this.email,
     required this.isEmailVerified,
   });
@@ -21,7 +23,8 @@ class AuthUser {
   ///Фабричный конструктор, который создает экземпляр AuthUser из объекта User Firebase.
   /// Он использует свойства emailVerified и email из User для инициализации нового объекта AuthUser.
   factory AuthUser.fromFirebase(User user) => AuthUser(
-        email: user.email,
-        isEmailVerified: user.emailVerified,
+        id: user.uid,
+        email: user.email!,
+        isEmailVerified: user.emailVerified, 
       );
 }
